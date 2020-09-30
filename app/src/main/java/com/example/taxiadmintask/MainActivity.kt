@@ -2,22 +2,21 @@ package com.example.taxiadmintask
 
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.taxiadmintask.data.model.PostResponse
-import com.example.taxiadmintask.data.remote.ApiClient
-import com.example.taxiadmintask.data.remote.SessionManager
-import com.example.taxiadmintask.ui.main.SectionsPagerAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.example.taxiadmintask.data.model.Types
+import com.example.taxiadmintask.ui.adapter.SectionsPagerAdapter
+import com.example.taxiadmintask.ui.viewModel.PageViewModel
+import com.example.weatherapp.utils.Resource
+import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_main.*
 
-const val testToken = "b1tf9cdg3ebl39a"
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var apiClient: ApiClient
-    private lateinit var sessionManager: SessionManager
+    private lateinit var pageViewModel: PageViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,26 +26,41 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
-        apiClient = ApiClient()
-        sessionManager = SessionManager(this)
+        setupUI()
 
-        fetchPosts()
+        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+            override fun onPageScrolled(i: Int, v: Float, i1: Int) {}
+            override fun onPageSelected(i: Int) {
+                val token = (viewPager.adapter as SectionsPagerAdapter).getPageTitle(i)
+
+                Toast.makeText(this@MainActivity,
+                    "${(viewPager.adapter as SectionsPagerAdapter).getPageTitle(i)}",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                pageViewModel.getPostResponse(Types(types = listOf(1)), token as String).observe(this@MainActivity, {
+                    it?.let {
+                        Log.i("LAST", it.data.toString())
+                        it.data?.let {
+                            when (it.status) {
+                                Resource.Status.SUCCESS -> {
+                                }
+                                Resource.Status.LOADING -> {
+
+                                }
+                                Resource.Status.ERROR -> {
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+
+            override fun onPageScrollStateChanged(i: Int) {}
+        })
+    }
+    private fun setupUI() {
+        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java)
     }
 
-    private fun fetchPosts() {
-
-        // Pass the token as parameter
-        apiClient.getApiService(this).fetchPosts(listOf(1), token = "Bearer bz25e927zjpmqmpq")
-            .enqueue(object : Callback<PostResponse> {
-                override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                    Log.i("resp", t.message.toString(), t)
-                }
-
-                override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                    Log.i("resp", response.body().toString())
-                    Log.i("resp", sessionManager.fetchAuthToken().toString())
-                    Log.i("resp", listOf(1).toString())
-                }
-            })
-    }
 }

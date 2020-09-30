@@ -1,7 +1,10 @@
-package com.example.taxiadmintask.data.remote.Interceptor
+package com.example.taxiadmintask.utils.Interceptor
 
 import android.content.Context
-import com.example.taxiadmintask.data.remote.SessionManager
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider
+import com.example.taxiadmintask.ui.viewModel.PageViewModel
+import com.example.taxiadmintask.utils.SessionManager
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -12,6 +15,7 @@ class AuthInterceptor(context: Context) : Interceptor {
         val requestBuilder = chain.request().newBuilder()
 
         sessionManager.fetchAuthToken()?.let {
+
             requestBuilder.addHeader("Authorization", "Bearer $it")
         }
 

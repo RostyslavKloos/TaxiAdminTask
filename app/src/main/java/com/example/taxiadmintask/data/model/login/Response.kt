@@ -2,7 +2,6 @@ package com.example.taxiadmintask.data.model.login
 
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class Response(
     var account: Int,
@@ -16,5 +15,5 @@ data class Response(
     var number: Int,
     @SerializedName("reward_account")
     var rewardAccount: Int,
-    var right: Objects
+    var right: Right
 )

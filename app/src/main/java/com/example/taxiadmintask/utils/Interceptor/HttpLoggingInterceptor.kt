@@ -1,4 +1,4 @@
-package com.example.taxiadmintask.data.remote.Interceptor
+package com.example.taxiadmintask.utils.Interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response
