@@ -1,11 +1,10 @@
-package com.example.taxiadmintask.ui
+package com.example.taxiadmintask.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.taxiadmintask.MainActivity
 import com.example.taxiadmintask.data.model.login.LoginRequest
 import com.example.taxiadmintask.databinding.LoginFragmentBinding
 import com.example.taxiadmintask.ui.viewModel.PageViewModel

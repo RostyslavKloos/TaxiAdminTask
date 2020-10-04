@@ -1,7 +1,9 @@
 package com.example.taxiadmintask.data.model
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 data class Response(
     var advanced: Any,

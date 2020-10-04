@@ -5,20 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.taxiadmintask.databinding.FragmentMainBinding
 import com.example.taxiadmintask.ui.viewModel.PageViewModel
-import com.example.taxiadmintask.utils.SessionManager
-import com.example.weatherapp.utils.Resource.Status.*
+import java.io.Serializable
+
 
 class PlaceholderFragment : Fragment() {
 
+    private lateinit var pageViewModel: PageViewModel
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var pageViewModel: PageViewModel
-    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,27 +28,37 @@ class PlaceholderFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        sessionManager = SessionManager(requireContext())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //binding.tvTest.text = arguments?.getString("TOKEN")
+
         pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java)
 
-        arguments?.getString(SECTION_TOKEN)?.let { pageViewModel.setIndex(it) }
-        pageViewModel.currentToken.observe(viewLifecycleOwner, {
-
-            //Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-        })
+//       binding.tvTest.text = arguments?.getString("token").toString().apply {
+//           Toast.makeText(requireContext(), this, Toast.LENGTH_SHORT ).show()
+//           Log.i("LOL", this )
+//       }
+        binding.tvTest.text = arguments?.getSerializable("postResponse").toString().apply {
+            Toast.makeText(requireContext(), this, Toast.LENGTH_SHORT ).show()
+        }
     }
 
-    companion object {
+    companion object{
 
-        private const val SECTION_TOKEN = "section_token"
+//        fun newInstance(token: String): PlaceholderFragment{
+//            val args = Bundle()
+//            args.putString("token", token)
+//            val fragment = PlaceholderFragment()
+//            fragment.arguments = args
+//            return fragment
+//        }
 
-        @JvmStatic
-        fun newInstance(token: String?): PlaceholderFragment {
-            return PlaceholderFragment().apply {
-
-            }
+        fun newInstance(token: Serializable): PlaceholderFragment{
+            val args = Bundle()
+            args.putSerializable("postResponse", token)
+            val fragment = PlaceholderFragment()
+            fragment.arguments = args
+            return fragment
         }
     }
 }

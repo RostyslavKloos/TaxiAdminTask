@@ -1,6 +1,7 @@
 package com.example.taxiadmintask.ui.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.taxiadmintask.data.model.PostResponse
 import com.example.taxiadmintask.data.model.Types
@@ -19,6 +20,12 @@ class PageViewModel(application: Application) : AndroidViewModel(application) {
     private val remoteDataSource: RemoteDataSource = RemoteDataSource(apiClient, application)
     private val repository: Repository = Repository(remoteDataSource)
 
+    private val _postResponse = MutableLiveData<PostResponse>()
+    val postResponse: LiveData<PostResponse> = _postResponse
+
+    fun onPostResponse(response: PostResponse) {
+        _postResponse.value = response
+    }
 
     fun getLoginResponse(request: LoginRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
@@ -29,10 +36,6 @@ class PageViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private val _index = MutableLiveData<String>()
-    val currentToken: LiveData<String> = Transformations.map(_index) {
-        it.toString()
-    }
 
     fun getPostResponse(types: Types, token: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
@@ -43,7 +46,4 @@ class PageViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setIndex(index: String) {
-        _index.value = index
-    }
 }
