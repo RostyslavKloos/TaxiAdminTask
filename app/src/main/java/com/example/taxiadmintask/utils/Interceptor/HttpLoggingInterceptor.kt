@@ -1,9 +1,11 @@
-package com.example.taxiadmintask.data.remote.Interceptor
+package com.example.taxiadmintask.utils.Interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 
 class HttpLoggingInterceptor: Interceptor {
+
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()

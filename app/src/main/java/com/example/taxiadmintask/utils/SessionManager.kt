@@ -1,10 +1,11 @@
-package com.example.taxiadmintask.data.remote
+package com.example.taxiadmintask.utils
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.taxiadmintask.R
+import com.example.taxiadmintask.data.model.PostResponse
 
-class SessionManager (context: Context) {
+class SessionManager(context: Context) {
     private var prefs: SharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE)
 
     companion object {
@@ -20,5 +21,4 @@ class SessionManager (context: Context) {
     fun fetchAuthToken(): MutableSet<String>? {
         return prefs.getStringSet(LOGIN_TOKEN, null)
     }
-
 }
