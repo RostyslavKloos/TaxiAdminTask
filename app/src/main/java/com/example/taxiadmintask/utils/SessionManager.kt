@@ -11,6 +11,7 @@ class SessionManager(context: Context) {
     companion object {
         const val LOGIN_TOKEN = "login_token"
     }
+
     fun saveAuthToken(keys: MutableSet<String>) {
         val editor = prefs.edit()
         editor.putStringSet(LOGIN_TOKEN, keys)

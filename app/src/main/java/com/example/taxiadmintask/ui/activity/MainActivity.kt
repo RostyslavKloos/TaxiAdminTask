@@ -1,75 +1,65 @@
 package com.example.taxiadmintask.ui.activity
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.taxiadmintask.R
-import com.example.taxiadmintask.data.model.Types
-import com.example.taxiadmintask.ui.adapter.SectionsPagerAdapter
-import com.example.taxiadmintask.ui.fragments.PlaceholderFragment
+import com.example.taxiadmintask.ui.adapter.ServiceViewAdapter
 import com.example.taxiadmintask.ui.viewModel.PageViewModel
-import com.example.weatherapp.utils.Resource
+import com.example.taxiadmintask.utils.SessionManager
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var pageViewModel: PageViewModel
-    private lateinit var fragmentTransaction: FragmentTransaction
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
-        fragmentTransaction = supportFragmentManager.beginTransaction()
-        setupUI()
+        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java)
+        initViewPager2()
+    }
 
-        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
-            override fun onPageScrolled(i: Int, v: Float, i1: Int) {}
-            override fun onPageSelected(i: Int) {
+    private fun initViewPager2() {
+        viewPager = findViewById(R.id.view_pager)
+        //adapter = SectionsPagerAdapter(this, supportFragmentManager, lifecycle)
+        val sessionManager =  SessionManager(applicationContext)
+        val tokens = sessionManager.fetchAuthToken()
+        val adapter = tokens?.let { ServiceViewAdapter(it, pageViewModel, lifecycle, this) }
 
-                val token = (viewPager.adapter as SectionsPagerAdapter).getPageTitle(i).toString()
-                val bundle = Bundle()
+        viewPager.adapter = adapter
+        tabLayout = findViewById(R.id.tabs)
+        TabLayoutMediator(tabLayout, viewPager){
+            tab, position ->
+            val token = adapter?.tokens?.elementAt(position)
+            tab.text = token
 
-                pageViewModel.getPostResponse(Types(types = listOf(1)), "Bearer $token").observe(this@MainActivity, {
+        }.attach()
 
-                    it?.let {
-                        it.data?.let {
-                            when (it.status) {
-                                Resource.Status.SUCCESS -> {
-                                    bundle.putSerializable("postResponse", it.data )
-
-                                }
-                                Resource.Status.LOADING -> {
-
-                                }
-                                Resource.Status.ERROR -> {
-                                }
-                            }
-                        }
-                    }
-                })
-                //Log.i("tes:", "${(viewPager.adapter as SectionsPagerAdapter).getPageTitle(i)}" )
+        tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+              //  Toast.makeText(this@MainActivity, "${tab?.text} selected", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onPageScrollStateChanged(i: Int) {
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+               // Toast.makeText(this@MainActivity, "${tab?.text} unselected", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                //Toast.makeText(this@MainActivity, "${tab?.text} reselected", Toast.LENGTH_SHORT).show()
             }
         })
     }
-    private fun fetchData(token: String) {
-
-    }
-
-    private fun setupUI() {
-        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java)
-    }
 }
+
+
+
+

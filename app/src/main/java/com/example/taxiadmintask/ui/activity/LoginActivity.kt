@@ -3,6 +3,7 @@ package com.example.taxiadmintask.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.taxiadmintask.data.model.login.LoginRequest
@@ -48,18 +49,15 @@ class LoginActivity : AppCompatActivity() {
                             it.data?.response?.forEach {
                                 keyArray.add(it.key)
                             }
-                            binding.tvTest.text = keyArray.toString()
-                            Log.i("MyTag", it.data?.response.toString())
                             sessionManager.saveAuthToken(keyArray)
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         }
                     }
                     Resource.Status.ERROR -> {
-                        //
                     }
                     Resource.Status.LOADING -> {
-                        //
+                        binding.pbLogin.visibility = ProgressBar.VISIBLE
                     }
                 }
             }
